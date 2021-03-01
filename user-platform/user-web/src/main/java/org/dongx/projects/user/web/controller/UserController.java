@@ -23,8 +23,7 @@ public class UserController implements PageController {
 	
 	@POST
 	@Path("/register")
-	@Override
-	public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
+	public String execute(HttpServletRequest request, HttpServletResponse response) {
 		// 获取 session
 		HttpSession session = request.getSession();
 		

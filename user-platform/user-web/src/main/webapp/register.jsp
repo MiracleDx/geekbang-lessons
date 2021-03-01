@@ -10,7 +10,7 @@
 </style>
 <body>
     <div class="container-lg">
-        <form action="/user/register" method="get">
+        <form action="/user/register" method="post">
             <div class="form-group">
                 <label for="name">name</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter name">

@@ -17,7 +17,6 @@ import javax.ws.rs.Path;
 public class RegisterController implements PageController {
 
 	@GET
-	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
 		return "register.jsp";
 	}

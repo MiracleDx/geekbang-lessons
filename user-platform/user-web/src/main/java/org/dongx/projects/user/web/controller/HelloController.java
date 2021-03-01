@@ -20,8 +20,7 @@ public class HelloController implements PageController {
 	@GET
 	@POST
 	@Path("/world")
-	@Override
-	public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
+	public String execute(HttpServletRequest request, HttpServletResponse response) {
 		return "index.jsp";
 	}
 }
