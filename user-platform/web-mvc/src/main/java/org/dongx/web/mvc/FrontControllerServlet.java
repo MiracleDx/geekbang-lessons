@@ -29,40 +29,58 @@ import java.util.*;
 public class FrontControllerServlet extends HttpServlet {
 
 	/**
-	 * 请求路径和 Controller 的映射关系缓存
-	 */
-	private Map<String, Controller> controllersMapping = new HashMap<>();
-
-
-	/**
 	 * 请求路径和 {@link HandlerMethodInfo} 映射关系缓存
 	 */
 	private Map<String, HandlerMethodInfo> handlerMethodInfoMapping = new HashMap<>();
 
 	@Override
 	public void init(ServletConfig servletConfig) {
-		initHandleMethod();
+		try {
+			initHandleMethod();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	/**
-	 * 利用 SPI 读取所有的 RestController 的注解信息 @Path
+	 * 利用 SPI 读取所有的 Controller 的注解信息 @Path
 	 */
 	private void initHandleMethod() {
 		for (Controller controller : ServiceLoader.load(Controller.class)) {
 			Class<? extends Controller> controllerClass = controller.getClass();
 			Path pathFromClass = controllerClass.getAnnotation(Path.class);
-			String requestPath = pathFromClass.value();
+			String requestPath = "";
+			// Controller 上标注 url 时 request = path#value()
+			if (pathFromClass != null) {
+				requestPath = pathFromClass.value();
+			}
+			
 			Method[] publicMethods = controllerClass.getMethods();
 			// 处理支持的 HTTP 集合
 			for (Method method : publicMethods) {
+				// 每个方法需要重新拼接 requestPath
+				String realRequestPath = requestPath;
 				Set<String> supportedMethods = findSupportedHttpMethods(method);
 				Path pathFromMethod = method.getAnnotation(Path.class);
 				if (pathFromMethod != null) {
-					requestPath += pathFromMethod.value();
+					realRequestPath += pathFromMethod.value();
 				}
-				handlerMethodInfoMapping.put(requestPath, new HandlerMethodInfo(requestPath, method, supportedMethods));
+
+				// 没有 requestPath 不存入映射关系
+				if ("".equals(realRequestPath)) {
+					continue;
+				}
+				
+				// 只有 method 包含 HttpMethod 注解才可以进行映射
+				if (!supportedMethods.isEmpty()) {
+					// url 映射相同需要抛出异常
+					if (handlerMethodInfoMapping.get(realRequestPath) != null) {
+						throw new IllegalStateException("Ambiguous mapping. Cannot map " + realRequestPath + ", This is already " + controller + " exists");
+					}
+					handlerMethodInfoMapping.put(realRequestPath, new HandlerMethodInfo(realRequestPath, controller, method, supportedMethods));
+				}
 			}
-			controllersMapping.put(requestPath, controller);
 		}
 	}
 
@@ -81,11 +99,10 @@ public class FrontControllerServlet extends HttpServlet {
 			}
 		}
 
-		if (supportedHttpMethods.isEmpty()) {
-			supportedHttpMethods.addAll(Arrays.asList(HttpMethod.GET, HttpMethod.POST,
-					HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS));
-		}
-
+		//if (supportedHttpMethods.isEmpty()) {
+		//	supportedHttpMethods.addAll(Arrays.asList(HttpMethod.GET, HttpMethod.POST,
+		//			HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS));
+		//}
 		return supportedHttpMethods;
 	}
 
@@ -98,35 +115,39 @@ public class FrontControllerServlet extends HttpServlet {
 		String prefixPath = servletContextPath;
 		// 映射路径（子路径） 去除 contextPath 路径
 		String requestMappingPath = StringUtils.substringAfter(requestURI, StringUtils.replace(prefixPath, "//", "/"));
-		// 映射 controller
-		Controller controller = controllersMapping.get(requestMappingPath);
-
-		if (controller != null) {
-			// 获取方法元信息
-			HandlerMethodInfo handlerMethodInfo = handlerMethodInfoMapping.get(requestMappingPath);
+		// 获取方法元信息
+		HandlerMethodInfo handlerMethodInfo = handlerMethodInfoMapping.get(requestMappingPath);
+		if (handlerMethodInfo != null) {
 			try {
-				if (handlerMethodInfo != null) {
-					String httpMethod = request.getMethod();
-					if (!handlerMethodInfo.getSupportedHttpMethods().contains(httpMethod)) {
-						// HTTP 方法不支持
-						response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-						return;
-					}
+				String httpMethod = request.getMethod();
+				if (!handlerMethodInfo.getSupportedHttpMethods().contains(httpMethod)) {
+					// HTTP 方法不支持
+					response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+					response.getWriter().write("The method not allowed " + httpMethod);
+					return;
 				}
 
+				Controller controller = handlerMethodInfo.getHandlerController();
 				if (controller instanceof PageController) {
 					PageController pageController = PageController.class.cast(controller);
-					String viewPath = pageController.execute(request, response);
-					// 页面请求 forward
-					// request -> RequestDispatcher forward
-					// RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewPath); 支持相对路径和绝对路径
+					Object result = handlerMethodInfo.getHandlerMethod().invoke(controller, request, response);
 					
-					// ServletContext -> RequestDispatcher forward
-					// ServletContext -> RequestDispatcher 必须以 "/" 开头 只能使用绝对路径
+					// 获取请求上下文
 					ServletContext servletContext = request.getServletContext();
-					if (!viewPath.startsWith("/")) {
-						viewPath = "/" + viewPath;
+					String viewPath = "";
+					if (result instanceof String) {
+						viewPath = result.toString();
+						// 页面请求 forward
+						// request -> RequestDispatcher forward
+						// RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewPath); 支持相对路径和绝对路径
+
+						// ServletContext -> RequestDispatcher forward
+						// ServletContext -> RequestDispatcher 必须以 "/" 开头 只能使用绝对路径
+						if (!viewPath.startsWith("/")) {
+							viewPath = "/" + viewPath;
+						}
 					}
+					
 					// 请求转发
 					RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(viewPath);
 					requestDispatcher.forward(request, response);
@@ -141,11 +162,13 @@ public class FrontControllerServlet extends HttpServlet {
 					throw new ServletException(throwable.getCause());
 				}
 			}
-		} 
-		// 会抛出 Not found /favicon.ico 需要处理
-		//else {
-		//	response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		//	throw new ServletException("Not found " + requestMappingPath);
-		//}
+		} else {
+			//会抛出 Not found /favicon.ico 需要处理
+			if (!requestMappingPath.contains("/favicon.ico")) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				response.getWriter().write("Not found " + requestMappingPath);
+				return;
+			}
+		}
 	}
 }

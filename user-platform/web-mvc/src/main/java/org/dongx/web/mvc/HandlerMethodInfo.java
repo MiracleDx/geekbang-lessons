@@ -1,5 +1,7 @@
 package org.dongx.web.mvc;
 
+import org.dongx.web.mvc.controller.Controller;
+
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -15,6 +17,8 @@ public class HandlerMethodInfo {
 	 * 请求路径
 	 */
 	private final String requestPath;
+	
+	private final Controller handlerController;
 
 	/**
 	 * 处理方法
@@ -26,8 +30,9 @@ public class HandlerMethodInfo {
 	 */
 	private final Set<String> supportedHttpMethods;
 
-	public HandlerMethodInfo(String requestPath, Method handlerMethod, Set<String> supportedHttpMethods) {
+	public HandlerMethodInfo(String requestPath, Controller handlerController, Method handlerMethod, Set<String> supportedHttpMethods) {
 		this.requestPath = requestPath;
+		this.handlerController = handlerController;
 		this.handlerMethod = handlerMethod;
 		this.supportedHttpMethods = supportedHttpMethods;
 	}
@@ -36,6 +41,10 @@ public class HandlerMethodInfo {
 		return requestPath;
 	}
 
+	public Controller getHandlerController() {
+		return handlerController;
+	}
+	
 	public Method getHandlerMethod() {
 		return handlerMethod;
 	}
