@@ -88,7 +88,7 @@ public class DBConnectionManager {
 			logger.severe("JNDI injected datasource failed, used Class.ForName() to injected");
 			try {
 				Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-				String databaseURL = "jdbc:derby:D:/db/user-platform;create=true";
+				String databaseURL = "jdbc:derby:db/user-platform;create=true";
 				return DriverManager.getConnection(databaseURL);
 			} catch (ClassNotFoundException | SQLException e1) {
 				e1.printStackTrace();
@@ -117,7 +117,7 @@ public class DBConnectionManager {
         // Driver driver = DriverManager.getDriver("jdbc:derby:/db/user-platform;create=true");
         // Connection connection = driver.connect("jdbc:derby:/db/user-platform;create=true", new Properties());
 
-		String databaseURL = "jdbc:derby:D:/db/user-platform;create=true";
+		String databaseURL = "jdbc:derby:db/user-platform;create=true";
 		Connection connection = DriverManager.getConnection(databaseURL);
 		
 		try (Statement statement = connection.createStatement()) {
