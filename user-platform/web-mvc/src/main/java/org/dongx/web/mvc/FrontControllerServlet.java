@@ -39,7 +39,6 @@ public class FrontControllerServlet extends HttpServlet {
 			initHandleMethod();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 
