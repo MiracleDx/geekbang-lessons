@@ -1,7 +1,7 @@
 package org.dongx.projects.user.repository;
 
 import org.dongx.projects.user.domain.User;
-import org.dongx.projects.user.orm.JdbcTemplate;
+import org.dongx.projects.user.orm.jdbc.JdbcTemplate;
 import org.dongx.projects.user.sql.DBConnectionManager;
 
 import java.util.ArrayList;

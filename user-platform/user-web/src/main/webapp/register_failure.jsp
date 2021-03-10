@@ -8,5 +8,6 @@
         <!-- Content here -->
         注册 ${user.name} 失败 请重试。
         <br/>
+        错误原因: ${error}
     </div>
 </body>

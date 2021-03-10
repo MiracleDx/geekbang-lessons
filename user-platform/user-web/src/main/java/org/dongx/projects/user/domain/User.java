@@ -1,5 +1,11 @@
 package org.dongx.projects.user.domain;
 
+import org.dongx.projects.user.validator.bean.validation.Phone;
+import org.dongx.projects.user.validator.bean.validation.UserValid;
+import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -8,16 +14,26 @@ import java.util.Objects;
  * @author <a href="mailto:dongxiang886@gmail.com>Dongx</a>
  * @since 1.0
  */
-public class User {
-	
+@UserValid
+@Entity
+@Table(name = "users")
+public class User implements Serializable {
+
+	@Id
 	private Long id;
-	
+
+	@Column
 	private String name;
-	
+
+	@Column
+	@Length(min = 6, max = 32)
 	private String password;
-	
+
+	@Column
 	private String email;
-	
+
+	@Column
+	@Phone
 	private String phoneNumber;
 
 	public Long getId() {

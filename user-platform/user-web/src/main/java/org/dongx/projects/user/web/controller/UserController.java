@@ -1,8 +1,8 @@
 package org.dongx.projects.user.web.controller;
 
+import org.dongx.context.ComponentContext;
 import org.dongx.projects.user.domain.User;
-import org.dongx.projects.user.repository.DatabaseUserRepository;
-import org.dongx.projects.user.sql.DBConnectionManager;
+import org.dongx.projects.user.service.UserService;
 import org.dongx.web.mvc.controller.PageController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +28,7 @@ public class UserController implements PageController {
 		HttpSession session = request.getSession();
 		
 		User user = new User();
+		user.setId(Long.parseLong(request.getParameter("id")));
 		user.setName(request.getParameter("name"));
 		user.setPassword(request.getParameter("password"));
 		user.setEmail(request.getParameter("email"));
@@ -35,14 +36,23 @@ public class UserController implements PageController {
 		
 		String forwardPath;
 		try {
-			DatabaseUserRepository databaseUserRepository = new DatabaseUserRepository(new DBConnectionManager());
-			// 存储用户
-			databaseUserRepository.save(user);
+			//DatabaseUserRepository databaseUserRepository 
+			//		= new DatabaseUserRepository(ComponentContext.getInstance().getComponent("bean/DBConnectionManager"));
+			//// 存储用户
+			//databaseUserRepository.save(user);
 			// 查询所有用户
-			Collection<User> users = databaseUserRepository.getAll();
+			//Collection<User> users = databaseUserRepository.getAll();
+			//session.setAttribute("users", users);
+
+			UserService userService = ComponentContext.getInstance().getComponent("bean/UserService");
+			userService.register(user);
+			// 查询所有用户
+			Collection<User> users = userService.findAll();
 			session.setAttribute("users", users);
+
 			forwardPath = "register_success.jsp";
 		} catch (Exception e) {
+			session.setAttribute("error", e.getMessage());
 			forwardPath = "register_failure.jsp";
 		}
 		session.setAttribute("user", user);

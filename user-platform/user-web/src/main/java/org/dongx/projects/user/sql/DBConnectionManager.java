@@ -2,7 +2,8 @@ package org.dongx.projects.user.sql;
 
 import org.dongx.projects.user.domain.User;
 
-import javax.naming.InitialContext;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -24,6 +25,12 @@ public class DBConnectionManager {
 	private static Logger logger = Logger.getLogger(DBConnectionManager.class.getName());
 	
 	private Connection connection;
+	
+	@Resource(name = "jdbc/UserPlatformDB")
+	private DataSource dataSource;
+
+	@Resource(name = "bean/EntityManager")
+	private EntityManager entityManager;
 
 	/**
 	 * 删除用户表 SQL
@@ -79,23 +86,47 @@ public class DBConnectionManager {
 	 * @return {@link Connection}
 	 */
 	public Connection getConnection() {
+		//try {
+		//	InitialContext initialContext = new InitialContext();
+		//	DataSource ds = (DataSource) initialContext.lookup("java:comp/env/jdbc/UserPlatformDB");
+		//	return ds.getConnection();
+		//} catch (Exception e) {
+		//	// JNDI 数据源失败采用 Class.forName 注入
+		//	logger.severe("JNDI injected datasource failed, used Class.ForName() to injected");
+		//	try {
+		//		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+		//		String databaseURL = "jdbc:derby:db/user-platform;create=true";
+		//		return DriverManager.getConnection(databaseURL);
+		//	} catch (ClassNotFoundException | SQLException e1) {
+		//		e1.printStackTrace();
+		//	}
+		//}
+		
+		// 依赖查找
+		Connection connection = null;
 		try {
-			InitialContext initialContext = new InitialContext();
-			DataSource ds = (DataSource) initialContext.lookup("java:comp/env/jdbc/UserPlatformDB");
-			return ds.getConnection();
-		} catch (Exception e) {
-			// JNDI 数据源失败采用 Class.forName 注入
-			logger.severe("JNDI injected datasource failed, used Class.ForName() to injected");
-			try {
-				Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-				String databaseURL = "jdbc:derby:db/user-platform;create=true";
-				return DriverManager.getConnection(databaseURL);
-			} catch (ClassNotFoundException | SQLException e1) {
-				e1.printStackTrace();
-			}
+			connection = dataSource.getConnection();
+			this.connection = connection;
+		} catch (SQLException e) {
+			logger.severe(e.getMessage());
 		}
-		return null;
+		
+		if (connection != null) {
+			logger.info("获取 JNDI 数据库连接成功");
+		}
+		
+		return connection;
 	}
+
+	/**
+	 * 获取 EntityManager
+	 * @return 
+	 */
+	public EntityManager getEntityManager() {
+		logger.info("当前 EntityManager 实现类：" + entityManager.getClass().getName());
+		return entityManager;
+	}
+	
 	/**
 	 * 释放数据库连接
 	 */

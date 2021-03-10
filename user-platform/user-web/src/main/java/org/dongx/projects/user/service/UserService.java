@@ -2,6 +2,8 @@ package org.dongx.projects.user.service;
 
 import org.dongx.projects.user.domain.User;
 
+import java.util.List;
+
 /**
  * 用户服务
  *
@@ -50,4 +52,10 @@ public interface UserService {
 	 * @return {@link User}
 	 */
 	User queryUserByNameAndPassword(String name, String password);
+
+	/**
+	 * 查询所有用户
+	 * @return {@link List<User>}
+	 */
+	List<User> findAll();
 }

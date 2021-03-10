@@ -1,4 +1,4 @@
-package org.dongx.projects.user.orm;
+package org.dongx.projects.user.orm.jdbc;
 
 import org.apache.commons.lang.ClassUtils;
 import org.dongx.function.ThrowableFunction;
