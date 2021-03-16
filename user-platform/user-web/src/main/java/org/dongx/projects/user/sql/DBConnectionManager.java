@@ -153,7 +153,7 @@ public class DBConnectionManager {
 		
 		try (Statement statement = connection.createStatement()) {
 			// 删除 users 表 返回 false
-			System.out.println(statement.execute(DROP_USERS_TABLE_DDL_SQL));
+			//System.out.println(statement.execute(DROP_USERS_TABLE_DDL_SQL));
 			// 创建 users 表 返回 false
 			System.out.println(statement.execute(CREATE_USERS_TABLE_DDL_SQL));
 			// 返回插入的条数 5
