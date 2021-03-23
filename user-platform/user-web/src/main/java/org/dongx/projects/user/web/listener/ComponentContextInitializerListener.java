@@ -1,7 +1,5 @@
 package org.dongx.projects.user.web.listener;
 
-import org.dongx.context.ComponentContext;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -21,10 +19,10 @@ public class ComponentContextInitializerListener implements ServletContextListen
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		// 获取 Servlet 上下文
-		this.servletContext = sce.getServletContext();
-		// 初始化组件上下文
-		ComponentContext context = new ComponentContext();
-		context.init(servletContext);
+		//this.servletContext = sce.getServletContext();
+		//// 初始化组件上下文
+		//ComponentContext context = new ComponentContext();
+		//context.init(servletContext);
 	}
 
 	@Override

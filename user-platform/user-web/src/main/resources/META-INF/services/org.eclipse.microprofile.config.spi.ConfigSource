@@ -1,3 +1,0 @@
-org.dongx.configuration.microprofile.config.source.JavaSystemPropertiesConfigSource
-org.dongx.configuration.microprofile.config.source.EnvPropertiesConfigSource
-org.dongx.configuration.microprofile.config.source.LocalPropertiesConfigSource

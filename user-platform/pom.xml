@@ -11,8 +11,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>configuration</module>
         <module>web-mvc</module>
         <module>user-web</module>
+        <module>dependency-injection</module>
     </modules>
 
     <properties>
@@ -36,6 +38,9 @@
         <!-- MicroProfile 版本-->
         <microprofile-config-api.version>2.0</microprofile-config-api.version>
         <jolokia-core.version>1.6.2</jolokia-core.version>
+
+        <!-- Testing 版本 -->
+        <junit.version>4.13</junit.version>
 
         <!-- Maven Plugins 版本 -->
         <maven.compiler.version>3.8.1</maven.compiler.version>
@@ -143,6 +148,13 @@
                 <groupId>org.jolokia</groupId>
                 <artifactId>jolokia-core</artifactId>
                 <version>${jolokia-core.version}</version>
+            </dependency>
+
+            <!-- junit 4 -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

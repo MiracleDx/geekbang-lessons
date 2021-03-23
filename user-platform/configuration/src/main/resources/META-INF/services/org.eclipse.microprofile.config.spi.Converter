@@ -1,0 +1,8 @@
+org.dongx.configuration.microprofile.config.converter.BooleanConverter
+org.dongx.configuration.microprofile.config.converter.ByteConverter
+org.dongx.configuration.microprofile.config.converter.DoubleConverter
+org.dongx.configuration.microprofile.config.converter.FloatConverter
+org.dongx.configuration.microprofile.config.converter.IntegerConverter
+org.dongx.configuration.microprofile.config.converter.LongConverter
+org.dongx.configuration.microprofile.config.converter.ShortConverter
+org.dongx.configuration.microprofile.config.converter.StringConverter

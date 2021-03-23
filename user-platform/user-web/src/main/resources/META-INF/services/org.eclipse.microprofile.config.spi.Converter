@@ -1,5 +1,0 @@
-org.dongx.configuration.microprofile.config.convert.DoubleConverter
-org.dongx.configuration.microprofile.config.convert.FloatConverter
-org.dongx.configuration.microprofile.config.convert.IntConverter
-org.dongx.configuration.microprofile.config.convert.LongConverter
-org.dongx.configuration.microprofile.config.convert.StringConverter

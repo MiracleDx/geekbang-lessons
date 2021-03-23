@@ -1,7 +1,7 @@
 package org.dongx.projects.user.orm.jdbc;
 
 import org.apache.commons.lang.ClassUtils;
-import org.dongx.function.ThrowableFunction;
+import org.dongx.context.function.ThrowableFunction;
 import org.dongx.projects.user.sql.DBConnectionManager;
 
 import java.beans.BeanInfo;

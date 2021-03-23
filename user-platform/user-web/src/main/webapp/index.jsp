@@ -6,6 +6,6 @@
 <body>
     <div class="container-lg">
         <!-- Content here -->
-        Hello,World 2021
+        Hello,World 2021 form ${application_name}, Java Version is ${java_version} come from ${java_home}
     </div>
 </body>

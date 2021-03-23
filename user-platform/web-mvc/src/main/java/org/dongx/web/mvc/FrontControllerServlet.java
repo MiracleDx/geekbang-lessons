@@ -1,6 +1,7 @@
 package org.dongx.web.mvc;
 
 import org.apache.commons.lang.StringUtils;
+import org.dongx.context.ComponentContext;
 import org.dongx.web.mvc.controller.Controller;
 import org.dongx.web.mvc.controller.PageController;
 import org.dongx.web.mvc.controller.RestController;
@@ -129,6 +130,11 @@ public class FrontControllerServlet extends HttpServlet {
 				Controller controller = handlerMethodInfo.getHandlerController();
 				if (controller instanceof PageController) {
 					PageController pageController = PageController.class.cast(controller);
+					// todo 魔法值可优化
+					Object injectionController = ComponentContext.getInstance().getComponent("bean/" + pageController.getClass().getSimpleName());
+					if (injectionController != null) {
+						controller = (Controller) injectionController;
+					}
 					Object result = handlerMethodInfo.getHandlerMethod().invoke(controller, request, response);
 					
 					// 获取请求上下文

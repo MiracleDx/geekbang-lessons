@@ -3,16 +3,12 @@ package org.dongx.projects.user.web.listener;
 import org.dongx.context.ComponentContext;
 import org.dongx.projects.user.domain.User;
 import org.dongx.projects.user.sql.DBConnectionManager;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 /**
@@ -38,31 +34,31 @@ public class TestingListener implements ServletContextListener {
 		//testUser(dbConnectionManager.getEntityManager());
 
 		// ConfigProviderResolver -> Config -> ConfigSource
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		ServiceLoader<ConfigProviderResolver> serviceLoader = ServiceLoader.load(ConfigProviderResolver.class, classLoader);
-		Iterator<ConfigProviderResolver> iterator = serviceLoader.iterator();
-		try {
-			while (iterator.hasNext()) {
-				ConfigProviderResolver providerResolver = iterator.next();
-				Config config = providerResolver.getConfig(classLoader);
-				
-				String applicationName = config.getValue("application.name", String.class);
-				System.out.println("the application name is " + applicationName);
-				String javaHome = config.getValue("JAVA_HOME", String.class);
-				System.out.println("the JAVA_HOME is " + javaHome);
-				String logLevel = config.getValue("org.geektimes.level", String.class);
-				System.out.println("the application log level is " + logLevel);
-				Integer count = config.getValue("java.util.logging.FileHandler.count", Integer.class);
-				System.out.println("the fileHandler count is " + count);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		//ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		//ServiceLoader<ConfigProviderResolver> serviceLoader = ServiceLoader.load(ConfigProviderResolver.class, classLoader);
+		//Iterator<ConfigProviderResolver> iterator = serviceLoader.iterator();
+		//try {
+		//	while (iterator.hasNext()) {
+		//		ConfigProviderResolver providerResolver = iterator.next();
+		//		Config config = providerResolver.getConfig(classLoader);
+		//		
+		//		String applicationName = config.getValue("application.name", String.class);
+		//		System.out.println("the application name is " + applicationName);
+		//		String javaHome = config.getValue("JAVA_HOME", String.class);
+		//		System.out.println("the JAVA_HOME is " + javaHome);
+		//		String logLevel = config.getValue("org.geektimes.level", String.class);
+		//		System.out.println("the application log level is " + logLevel);
+		//		Integer count = config.getValue("java.util.logging.FileHandler.count", Integer.class);
+		//		System.out.println("the fileHandler count is " + count);
+		//	}
+		//} catch (Exception e) {
+		//	e.printStackTrace();
+		//}
 		
 
 		//DefaultConfigProviderResolver configProviderResolver = new DefaultConfigProviderResolver();
-		//Config config = configProviderResolver.getConfig(classLoader);
-		//ConfigValue configValue = config.getConfigValue("application.name");
+		//Config org.dongx.configuration.microprofile.config = configProviderResolver.getConfig(classLoader);
+		//ConfigValue configValue = org.dongx.configuration.microprofile.config.getConfigValue("application.name");
 		//System.out.println(configValue.getValue());
 
 		logger.info("所有的 JNDI 组件名称：[");
