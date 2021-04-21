@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>首页</title>
+    <meta charset="UTF-8"/>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+<body>
+<div id="app" v-cloak>
+    <h1>{{ message }}</h1>
+    <br>
+    <a v-show="redirectUrl1" :href="redirectUrl1" >开始 Gitee Oauth2 授权码模式认证</a>
+    <br>
+    <a v-show="redirectUrl2" :href="redirectUrl2" >开始 Gitee Oauth2 密码模式认证</a>
+</div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                message: "Hello Gitee!",
+                redirectUrl1: 'http://gitee-oauth2:8080/oauth.html',
+                redirectUrl2: 'http://gitee-oauth2:8080/oauth-pass.html'
+            }
+        },
+        methods: {
+           
+        },
+        mounted() {
+        }
+    })
+</script>

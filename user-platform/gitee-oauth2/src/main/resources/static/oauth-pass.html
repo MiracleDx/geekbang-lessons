@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>授权</title>
+    <meta charset="UTF-8"/>
+</head>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+<body>
+<div id="app" v-cloak>
+    <h1>{{ message }}</h1>
+    <h2>先选择 Scope，补充邮箱密码后，获取个人信息</h2>
+    <br>
+    <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
+        <el-form-item label="邮箱">
+            <el-input v-model="formLabelAlign.email"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+            <el-input  type="password" v-model="formLabelAlign.password"></el-input>
+        </el-form-item>
+    </el-form>
+    
+    <el-select v-model="scope" placeholder="请选择" multiple placeholder>
+        <el-option
+                v-for="(v, idx) in scopes"
+                :key="idx"
+                :label="v"
+                :value="v">
+        </el-option>
+    </el-select>
+    
+    <button @click="fetchUserInfo">获取个人信息</button>
+
+    <div v-show="userInfo.login">
+        <h1>Hello {{ userInfo.login }}</h1>
+        <el-avatar shape="square" :size="100" :src="userInfo.avatar_url"></el-avatar>
+    </div>
+</div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                message: "Hello Password!",
+                scopes: [
+                    "user_info"
+                ],
+                labelPosition: 'right',
+                formLabelAlign: {
+                    email: '',
+                    password: '',
+                },
+                scope: [],
+                redirectUrl: '',
+                userInfo: {}
+            }
+        },
+        methods: {
+            fetchUserInfo() {
+                console.log({
+                    email: this.formLabelAlign.email,
+                    password: this.formLabelAlign.password,
+                    scopes: this.scope
+                })
+                axios.post('http://gitee-oauth2:8080/fetchUserInfoByPass', {
+                    email: this.formLabelAlign.email,
+                    password: this.formLabelAlign.password,
+                    scopes: this.scope
+                }).then(response => {
+                    console.log(response.data)
+                    this.userInfo = response.data
+                })
+            }
+        },
+        watch: {
+            scope() {
+                console.log(this.scope)
+            }
+        },
+        mounted() {
+        }
+    })
+</script>

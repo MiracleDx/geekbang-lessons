@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>授权</title>
+    <meta charset="UTF-8"/>
+</head>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+<body>
+<div id="app" v-cloak>
+    <h1>{{ message }}</h1>
+    <h2>先选择 Scope，再点击开始认证，重定向后再点击获取个人信息</h2>
+    <br>
+    <el-select v-model="scope" placeholder="请选择" multiple placeholder>
+        <el-option
+                v-for="(v, idx) in scopes"
+                :key="idx"
+                :label="v"
+                :value="v">
+        </el-option>
+    </el-select>
+    <a :href="redirectUrl">开始认证</a>
+    <button @click="fetchUserInfo">获取个人信息</button>
+
+    <div v-show="userInfo.login">
+        <h1>Hello {{ userInfo.login }}</h1>
+        <el-avatar shape="square" :size="100" :src="userInfo.avatar_url"></el-avatar>
+    </div>
+</div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                message: "Hello Authorization!",
+                scopes: [
+                    "user_info"
+                ],
+                scope: [],
+                redirectUrl: '',
+                userInfo: {}
+            }
+        },
+        methods: {
+            redirectToGitee() {
+                axios.post('http://gitee-oauth2:8080/redirectToGitee', {
+                    scopes: this.scope
+                }).then(response => {
+                    this.redirectUrl = response.data
+                })
+            },
+            fetchUserInfo() {
+                let url = window.location.href
+                let code = url.substring(url.indexOf('code=') + 5, url.length)
+                console.log(code)
+                axios.post('http://gitee-oauth2:8080/fetchUserInfo', {
+                    code: code
+                }).then(response => {
+                    console.log(response.data)
+                    this.userInfo = response.data
+                })
+            }
+        },
+        watch: {
+            scope() {
+                console.log(this.scope)
+            }
+        },
+        mounted() {
+            this.redirectToGitee()
+        }
+    })
+</script>

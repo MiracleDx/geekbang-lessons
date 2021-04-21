@@ -210,34 +210,35 @@ public class ComponentContext {
 	 * @return
 	 */
 	protected List<String> listComponentNames(String name) {
-		return executeInContext(context -> {
-			// 获取 JNDI 中组件的名称与 Class 的键值对
-			NamingEnumeration<NameClassPair> e = executeInContext(context, ctx -> ctx.list(name), true);
-			
-			// 目录 - Context
-			// 节点 -
-			
-			// 当前 JNDI 中没有子节点
-			if (e == null) {
-				return Collections.emptyList();
-			}
-			
-			List<String> fullNames = new LinkedList<>();
-			while (e.hasMoreElements()) {
-				NameClassPair element = e.nextElement();
-				String className = element.getClassName();
-				Class<?> targetClass = classLoader.loadClass(className);
-				// 如果当前名称是 Context 实现类，递归查找
-				if (Context.class.isAssignableFrom(targetClass)) {
-					fullNames.addAll(listComponentNames(element.getName()));
-				} else {
-					// 否则 当前名称绑定目标类型的话 添加该名称到集合中
-					String fullName = name.startsWith("/") ? element.getName() : name + "/" + element.getName();
-					fullNames.add(fullName);
-				}
-			}
-			return fullNames;
-		});
+		//return executeInContext(context -> {
+		//	// 获取 JNDI 中组件的名称与 Class 的键值对
+		//	NamingEnumeration<NameClassPair> e = executeInContext(context, ctx -> ctx.list(name), true);
+		//	
+		//	// 目录 - Context
+		//	// 节点 -
+		//	
+		//	// 当前 JNDI 中没有子节点
+		//	if (e == null) {
+		//		return Collections.emptyList();
+		//	}
+		//	
+		//	List<String> fullNames = new LinkedList<>();
+		//	while (e.hasMoreElements()) {
+		//		NameClassPair element = e.nextElement();
+		//		String className = element.getClassName();
+		//		Class<?> targetClass = classLoader.loadClass(className);
+		//		// 如果当前名称是 Context 实现类，递归查找
+		//		if (Context.class.isAssignableFrom(targetClass)) {
+		//			fullNames.addAll(listComponentNames(element.getName()));
+		//		} else {
+		//			// 否则 当前名称绑定目标类型的话 添加该名称到集合中
+		//			String fullName = name.startsWith("/") ? element.getName() : name + "/" + element.getName();
+		//			fullNames.add(fullName);
+		//		}
+		//	}
+		//	return fullNames;
+		//});
+		return null;
 	}
 
 	/**
